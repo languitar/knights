@@ -180,5 +180,9 @@
           <label>whether commands over D-Bus are accepted</label>
           <default>true</default>
       </entry>
+      <entry name="autoStartGame" type="Bool">
+          <label>whether to skip the new game dialog and directly start the game with recent settings</label>
+          <default>false</default>
+      </entry>
   </group>
 </kcfg>

@@ -52,6 +52,8 @@
 #include <QStatusBar>
 #include <QFileDialog>
 
+#include <iostream>
+
 const char* DontAskDiscard = "dontAskInternal";
 
 using namespace Knights;
@@ -239,7 +241,8 @@ void MainWindow::fileNew() {
 		return;
 
 	GameDialog* gameNewDialog = new GameDialog(this);
-	if(gameNewDialog->exec() == QDialog::Accepted) {
+    std::cout << Settings::autoStartGame() << std::endl;
+	if(Settings::autoStartGame() || gameNewDialog->exec() == QDialog::Accepted) {
 		Manager::self()->reset();
 		gameNewDialog->setupProtocols();
 		connect(Protocol::white(), &Protocol::error, this, &MainWindow::protocolError);

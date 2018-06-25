@@ -30,7 +30,7 @@ namespace Ui {
 }
 
 namespace Knights {
-  
+
 class EngineConfiguration
 {
   public:
@@ -40,9 +40,9 @@ class EngineConfiguration
       Uci = 1,
       Invalid = 0x10
     };
-    
+
     EngineConfiguration(const QString& string);
-    
+
     const QString toString() const;
 
     QString name;
@@ -53,7 +53,7 @@ class EngineConfiguration
 class EngineSettings : public QWidget
 {
   Q_OBJECT
-  
+
   enum Column
   {
     NameColumn = 0,
@@ -70,7 +70,7 @@ public:
 private:
     Ui::EngineSettings* ui;
     QList<EngineConfiguration> configurations;
-    
+
 public slots:
     void save();
 

@@ -31,6 +31,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_autoStartGame">
+        <property name="text">
+         <string>Start game without dialog</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
