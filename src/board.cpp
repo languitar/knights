@@ -490,6 +490,9 @@ void Board::updateGraphics() {
 	}
 	boardSize = boardSize + 2 * QSize ( sideMargin, topMargin );
 	qreal ratio = qMin ( sceneRect().width() / boardSize.width(), sceneRect().height() / boardSize.height() );
+    if ( ratio == 0 ) {
+        return;
+    }
 	sideMargin *= ratio;
 	topMargin *= ratio;
 
