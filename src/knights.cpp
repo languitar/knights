@@ -487,10 +487,9 @@ void MainWindow::gameOver(Color winner) {
 	dlg->setWindowTitle ( i18n("Game over") );
 	mainLayout->addWidget(mainWidget);
 
-	QDialogButtonBox *bBox = new QDialogButtonBox( QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Apply );
+	QDialogButtonBox *bBox = new QDialogButtonBox( QDialogButtonBox::Ok );
 	QMap<QDialogButtonBox::StandardButton, QByteArray> buttonsMap;
 	buttonsMap[QDialogButtonBox::Ok] = KStandardGameAction::name ( KStandardGameAction::New );
-	buttonsMap[QDialogButtonBox::Apply] = KStandardGameAction::name ( KStandardGameAction::Save );
 
 	for ( QMap<QDialogButtonBox::StandardButton, QByteArray>::ConstIterator it = buttonsMap.constBegin(); it != buttonsMap.constEnd(); ++it ) {
 		QAction* a = actionCollection()->action ( QLatin1String ( it.value() ) );
@@ -502,9 +501,6 @@ void MainWindow::gameOver(Color winner) {
 	}
 
 	connect( bBox, &QDialogButtonBox::accepted, dlg.data(), &QDialog::accept );
-	connect( bBox, &QDialogButtonBox::rejected, dlg.data(), &QDialog::reject );
-	connect( bBox->button (QDialogButtonBox::Apply), &QPushButton::clicked,
-	         static_cast<MainWindow *> (window()), &MainWindow::fileSave );
 
 	QLabel* label = new QLabel(this);
 	if ( winner == NoColor )
