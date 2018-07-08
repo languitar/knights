@@ -32,7 +32,7 @@ using namespace Knights;
 
 static const int fastAnimationDuration = 150;
 static const int normalAnimationDuration = 250;
-static const int slowAnimationDuration = 400;
+static const int slowAnimationDuration = 1200;
 
 Item::Item ( KGameRenderer* renderer, const QString &key, QGraphicsScene* scene, Pos boardPos, QGraphicsItem* parentItem ) : KGameRenderedObjectItem ( renderer, key, parentItem )
 {

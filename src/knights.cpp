@@ -113,6 +113,10 @@ MainWindow::MainWindow() : KXmlGuiWindow(),
 
 	m_themeProvider->discoverThemes("appdata", QLatin1String("themes"));
 	m_view->drawBoard(m_themeProvider);
+
+    if (Settings::autoStartGame()) {
+        this->fileNew();
+    }
 }
 
 void MainWindow::setupDocks() {
@@ -503,39 +507,29 @@ void MainWindow::gameOver(Color winner) {
 	connect( bBox, &QDialogButtonBox::accepted, dlg.data(), &QDialog::accept );
 
 	QLabel* label = new QLabel(this);
-	if ( winner == NoColor )
-		label->setText ( i18n ( "The game ended in a draw" ) );
-	else {
-		QString winnerName = Protocol::byColor ( winner )->playerName();
-		if ( winnerName == colorName(winner) ) {
-			if ( winner == White ) {
-				label->setText ( i18nc("White as in the player with white pieces",
-				                       "The game ended with a victory for <em>White</em>") );
-			} else {
-				label->setText ( i18nc("Black as in the player with black pieces",
-				                       "The game ended with a victory for <em>Black</em>") );
-			}
-		} else {
-			if ( winner == White ) {
-				label->setText ( i18nc("Player name, then <White as in the player with white pieces",
-				                       "The game ended with a victory for <em>%1</em>, playing White", winnerName) );
-			} else {
-				label->setText ( i18nc("Player name, then Black as in the player with black pieces",
-				                       "The game ended with a victory for <em>%1</em>, playing Black", winnerName) );
-			}
-		}
+	if ( winner == NoColor ) {
+		label->setText ( i18n ( "Unentschieden" ) );
+    } else {
+        if ( winner == White ) {
+            label->setText ( i18n("Du hast gewonnen!") );
+        } else {
+            label->setText ( i18n("Der Computer hat gewonnen!") );
+        }
 	}
 	mainLayout->addWidget(label);
 	mainLayout->addWidget(bBox);
 
-	int rc = dlg->exec();
+    say(label->text());
+
+	// int rc = dlg->exec();
 
 	qCDebug(LOG_KNIGHTS) << Protocol::white();
 	qCDebug(LOG_KNIGHTS) << Protocol::black();
 	delete dlg;
 
-	if (rc == QDialog::Accepted)
-		fileNew();
+	// if (rc == QDialog::Accepted) {
+	// 	fileNew();
+    // }
 }
 
 void MainWindow::setShowClockSetting(bool value) {

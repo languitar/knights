@@ -38,14 +38,28 @@
 #include <KgDifficulty>
 #include <KLocalizedString>
 
-#ifdef HAVE_SPEECH
-#include <QtTextToSpeech>
-#endif
+#include <QProcess>
 
 using namespace Knights;
 
 const int TimerInterval = 100;
 const int LineLimit = 80; // Maximum characters per line for PGN format
+
+void Knights::say(QString text) {
+    // QString program = QStringLiteral("espeak");
+    // QStringList arguments;
+    // arguments << QStringLiteral("-vmb-de6");
+    // arguments << QStringLiteral("-s130");
+    // arguments << QStringLiteral("-a150");
+    // arguments << text;
+
+    QString program = QStringLiteral("bash");
+    QStringList arguments;
+    arguments << QStringLiteral("-c");
+    arguments << QStringLiteral("(flock -e 200; curl -sS 'http://localhost:59125/process?INPUT_TYPE=TEXT&AUDIO=WAVE_FILE&OUTPUT_TYPE=AUDIO&LOCALE=DE&INPUT_TEXT=") + QString::fromLatin1(QUrl::toPercentEncoding(text)) + QStringLiteral("' | aplay) 200>/tmp/speaking");
+
+    QProcess::startDetached(program, arguments);
+}
 
 void Offer::accept() const {
 	Manager::self()->setOfferResult(id, AcceptOffer);
@@ -60,9 +74,9 @@ public:
 	GameManagerPrivate();
 
 	Color activePlayer;
-	bool running;
-	bool gameStarted;
-	bool gameOverInProcess;
+	volatile bool running;
+	volatile bool gameStarted;
+	volatile bool gameOverInProcess;
 	int timer;
 
 	TimeControl whiteTimeControl;
@@ -75,9 +89,6 @@ public:
 	QMap<int, Offer> offers;
 	QSet<int> usedOfferIds;
 
-#ifdef HAVE_SPEECH
-	QTextToSpeech* speech;
-#endif
 	ExternalControl* extControl;
 
 	QString filename;
@@ -94,9 +105,6 @@ GameManagerPrivate::GameManagerPrivate()
 	  gameOverInProcess(false),
 	  timer(0),
 	  rules(0),
-#ifdef HAVE_SPEECH
-	  speech(0),
-#endif
 	  extControl(0) {
 
 }
@@ -116,17 +124,9 @@ Manager* Manager::self() {
 
 Manager::Manager(QObject* parent) : QObject(parent),
 	d_ptr(new GameManagerPrivate) {
-#ifdef HAVE_SPEECH
-	Q_D(GameManager);
-	d->speech = new QTextToSpeech();
-#endif
 }
 
 Manager::~Manager() {
-#ifdef HAVE_SPEECH
-	Q_D(GameManager);
-	delete d->speech;
-#endif
 	delete d_ptr;
 }
 
@@ -413,9 +413,7 @@ void Manager::startGame() {
 	Q_D(GameManager);
 	Q_ASSERT(!d->gameStarted);
 	setRules(new ChessRules);
-	if ( Protocol::white()->supportedFeatures() & Protocol::AdjustDifficulty
-	        || Protocol::white()->supportedFeatures() & Protocol::AdjustDifficulty)
-		levelChanged(Kg::difficulty()->currentLevel());
+    levelChanged(Kg::difficulty()->currentLevel());
 
 	Protocol::white()->startGame();
 	Protocol::black()->startGame();
@@ -436,9 +434,11 @@ void Manager::gameOver(Color winner) {
 	stopTime();
 	Protocol::white()->setWinner(winner);
 	Protocol::black()->setWinner(winner);
-	emit winnerNotify(winner);
 
 	reset();
+
+	emit winnerNotify(winner);
+
 	d->gameOverInProcess = false;
 }
 
@@ -604,31 +604,25 @@ void Manager::sendPendingMove() {
 			QString toSpeak;
 			QString name = Protocol::byColor(d->activePlayer)->playerName();
 			if ( pendingMove.flag(Move::Castle) ) {
-				if ( pendingMove.to().first == 3 ) {
-					toSpeak = i18nc("string to be spoken when the opponent castles queenside",
-					                "%1 castles queenside", name);
-				} else {
-					toSpeak = i18nc("string to be spoken when the opponent castles queenside",
-					                "%1 castles kingside", name);
-				}
+                toSpeak = i18n("Rochade");
 			} else {
 				toSpeak = i18nc("string to be spoken when the opponent makes a normal  move",
-				                "%1 to %2",
+				                "%1 nach %2",
 				                pieceTypeName ( pendingMove.pieceData().second ),
 				                pendingMove.to().string()
 				               );
 			}
-#ifdef HAVE_SPEECH
-			qCDebug(LOG_KNIGHTS) << toSpeak;
-			d->speech->say(toSpeak);
 
 			if ( pendingMove.flag(Move::Check) ) {
-				if ( d->rules->hasLegalMoves ( oppositeColor( d->activePlayer ) ) )
-					d->speech->say ( i18nc( "Your king is under attack", "Check" ) );
-				else
-					d->speech->say ( i18nc( "Your king is dead", "Checkmate" ) );
+				if ( d->rules->hasLegalMoves ( oppositeColor( d->activePlayer ) ) ) {
+					toSpeak += QStringLiteral(". ") + i18n( "Der König steht im Schach!" );
+                }
 			}
-#endif /* HAVE_SPEECH */
+
+            if (!(toSpeak.isNull() || toSpeak.isEmpty())) {
+                qCDebug(LOG_KNIGHTS) << toSpeak;
+                say(toSpeak);
+            }
 		}
 
 		pendingMove = Move();

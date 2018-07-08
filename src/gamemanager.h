@@ -41,6 +41,8 @@ class KgDifficultyLevel;
 
 namespace Knights {
 
+void say(QString text);
+
 class Protocol;
 class Rules;
 class Move;

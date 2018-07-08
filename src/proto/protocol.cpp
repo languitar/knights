@@ -42,7 +42,7 @@ namespace Knights
         public:
 
             ProtocolPrivate();
-            
+
             QVariantMap attributes;
             Protocol* white;
             Protocol* black;
@@ -194,7 +194,7 @@ Protocol* Protocol::byColor(Color color)
     {
         return QList< Protocol::ToolWidgetData >();
     }
-    
+
 void Protocol::setWinner(Color winner)
 {
     Q_UNUSED(winner);

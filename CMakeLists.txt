@@ -20,13 +20,6 @@ find_package(Qt5 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
    Svg
 )
 
-find_package(Qt5TextToSpeech ${QT_REQUIRED_VERSION} QUIET)
-set_package_properties(Qt5TextToSpeech PROPERTIES
-   PURPOSE "Speaking of opponents moves")
-if (Qt5TextToSpeech_FOUND)
-   add_definitions(-DHAVE_SPEECH)
-endif ()
-
 find_package(KF5 REQUIRED COMPONENTS
   DBusAddons
   ConfigWidgets

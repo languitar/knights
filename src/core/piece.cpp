@@ -160,17 +160,17 @@ namespace Knights
         switch ( type )
         {
             case Pawn:
-                return i18n ( "Pawn" );
+                return i18n ( "Bauer" );
             case Rook:
-                return i18n ( "Rook" );
+                return i18n ( "Turm" );
             case Knight:
-                return i18n ( "Knight" );
+                return i18n ( "Springer" );
             case Bishop:
-                return i18n ( "Bishop" );
+                return i18n ( "Läufer" );
             case Queen:
-                return i18n ( "Queen" );
+                return i18n ( "Dame" );
             case King:
-                return i18n ( "King" );
+                return i18n ( "König" );
             default:
                 return QString();
         }
