@@ -74,6 +74,7 @@ void TextProtocol::writeCheckMoves(const QString& text) {
 
 void TextProtocol::write(const QString& text) {
 	qCDebug(LOG_KNIGHTS) << text;
+    writeToConsole(text, ChatWidget::GeneralMessage);
 	stream << text << endl;
 }
 

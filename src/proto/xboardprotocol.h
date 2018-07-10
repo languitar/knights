@@ -56,6 +56,10 @@ private:
 	int m_increment;
 	int m_baseTime;
 	bool m_timeLimit;
+    bool m_initComplete;
+    Features m_features;
+
+    bool m_usermove;
 
 public Q_SLOTS:
 	virtual void init ();
