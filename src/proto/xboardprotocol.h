@@ -61,6 +61,8 @@ private:
 
     bool m_usermove;
 
+    Move m_nextUserMove;
+
 public Q_SLOTS:
 	virtual void init ();
 	virtual void startGame();
@@ -71,6 +73,9 @@ public Q_SLOTS:
 	virtual void declineOffer(const Offer&);
 
 	virtual void setDifficulty(int depth, int memory);
+
+private Q_SLOTS:
+    void executeNextMove();
 };
 }
 

@@ -56,7 +56,7 @@ void Knights::say(QString text) {
     QString program = QStringLiteral("bash");
     QStringList arguments;
     arguments << QStringLiteral("-c");
-    arguments << QStringLiteral("(flock -e 200; curl -sS 'http://localhost:59125/process?INPUT_TYPE=TEXT&AUDIO=WAVE_FILE&OUTPUT_TYPE=AUDIO&LOCALE=DE&INPUT_TEXT=") + QString::fromLatin1(QUrl::toPercentEncoding(text)) + QStringLiteral("' | play) 200>/tmp/speaking");
+    arguments << QStringLiteral("(flock -e 200; curl -sS 'http://localhost:59125/process?INPUT_TYPE=TEXT&AUDIO=WAVE_FILE&OUTPUT_TYPE=AUDIO&LOCALE=DE&INPUT_TEXT=") + QString::fromLatin1(QUrl::toPercentEncoding(text)) + QStringLiteral("' | aplay) 200>/tmp/speaking");
 
     QProcess::startDetached(program, arguments);
 }

@@ -33,6 +33,7 @@
 #include <KShell>
 #include <KProcess>
 #include <QFileDialog>
+#include <QTimer>
 
 using namespace Knights;
 
@@ -79,7 +80,8 @@ void XBoardProtocol::startGame() {
     m_resumePending = false;
 }
 
-void XBoardProtocol::move ( const Move& m ) {
+void XBoardProtocol::executeNextMove() {
+    const Move m = this->m_nextUserMove;
     QString str = m.string(false);
     if (m.promotedType())
         str = str.toLower(); // "e7e8q" is used for the pawn promotion -> convert Q in the move string to lowercase q
@@ -97,6 +99,11 @@ void XBoardProtocol::move ( const Move& m ) {
         write("go");
         m_resumePending = false;
     }
+}
+
+void XBoardProtocol::move ( const Move& m ) {
+    this->m_nextUserMove = m;
+    QTimer::singleShot(1500, this, &XBoardProtocol::executeNextMove);
 }
 
 void XBoardProtocol::init (  ) {
