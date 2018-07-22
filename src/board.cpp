@@ -286,7 +286,8 @@ void Board::dropEvent(QGraphicsSceneDragDropEvent* e) {
 	if (draggedPiece) {
 		m_dragActive = false;
 		Pos from = draggedPiece->boardPos();
-		Pos to = mapFromScene ( e->scenePos() );
+        QPointF sceneCenter = draggedPiece->sceneBoundingRect().center();
+		Pos to = mapFromScene (sceneCenter);
 		Move move ( from, to );
 		if ( !Manager::self()->rules()->legalMoves ( from ).contains ( move ) )
 			centerOnPos ( draggedPiece );
@@ -304,6 +305,13 @@ void Board::dropEvent(QGraphicsSceneDragDropEvent* e) {
 
 void Board::dragEnterEvent(QGraphicsSceneDragDropEvent* e) {
 	e->setAccepted(Manager::self()->canLocalMove());
+    // adjust piece to mouse
+    if ( !draggedPiece ) {
+        return;
+    }
+    QPointF sceneCenter = draggedPiece->sceneBoundingRect().center();
+    draggedPiece->moveBy(e->scenePos().x() - sceneCenter.x(),
+                         e->scenePos().y() - sceneCenter.y());
 }
 
 void Board::dragMoveEvent(QGraphicsSceneDragDropEvent* e) {
